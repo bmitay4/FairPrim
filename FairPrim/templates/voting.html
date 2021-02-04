@@ -1,0 +1,71 @@
+{% extends "layout.html" %}
+{% block content %}
+{% for post in posts %}
+
+<!--[count of candidates, actual list of candidate, voting count array per candidate]   [3,(avi, moshe, david), (1,0,4)]-->
+{% set main_info = [0, 0, 0] %}
+{% set list1 = post.members.split(', ') %}
+{% for member in list1 %}
+{{main_info.insert(0, loop.length)}}
+{{main_info.insert(1, list1)}}
+{% break %}
+{% endfor %}
+{% set voting = [0]*main_info[0] %}
+{{main_info.insert(2, voting)}}
+
+{% for candidate in range(main_info[0]) %}
+    {% for voter in election %}
+        {% if voter.member_voted == candidate %}
+            {% if main_info[2].insert(candidate, main_info[2][candidate]+1) %}{% endif %}
+                {{main_info[2].pop(candidate+1)}}
+        {% endif %}
+    {% endfor %}
+{% endfor %}
+
+
+<div class="content-section">
+    <fieldset class="form-group">
+        <legend class="border-bottom mb-4">
+            נתוני הצבעה עבור מפלגת {{post.author.party}}
+            <small class="text-muted mr-2">({{ post.date_posted.strftime('%Y-%m-%d') }})</small>
+        </legend>
+        <div class="form-group">
+            <p> סה"כ מצביעים בפריימריז: {{ count }}</p>
+            <p> סה"כ מועמדים שהתמודדו ברשימה: {{main_info[0]}}
+            <p> רשימת המועמדים: {{main_info[1]}}</p>
+        </div>
+            <fieldset class="form-group">
+        <p> שקלול קולות המצביעים לפי אלגוריתם האריס ברטון וטלמון</p>
+            {% for candidate in main_info[1] %}
+            {% set first_index = loop.index %}
+                {% for voters in main_info[2] %}
+                {% set second_index = loop.index %}
+                {% if first_index == second_index %}
+                {% set sum = (voters * main_info[0])/count %}
+            <div class="input-group">
+            <div class="input-group-prepend">
+                <span class="input-group-text" id="candidate">{{candidate}}</span>
+            </div>
+            <input type="text" class="form-control" placeholder="{{voters}} קולות, נחשב את החלוקה לפי האלגוריתם: {{count}}/({{voters}} * {{main_info[0]}}) = {{sum}}">
+        </div>
+        {% endif %}
+        {% endfor %}
+         {% endfor %}
+    </fieldset>
+                <p>פנקס הבוחרים המלא</p>
+        {% for elc in election %}
+        <fieldset class="input-group">
+            <div class="input-group-prepend">
+                <span class="input-group-text" id="id">ת.ז. הבוחר</span>
+            </div>
+            <input type="text" class="form-control" placeholder="{{elc.id}}">
+            <div class="input-group-prepend">
+                <span class="input-group-text" id="member">הצביע עבור</span>
+            </div>
+            <input type="text" class="form-control" placeholder="{{main_info[1][elc.member_voted]}}">
+        </fieldset>
+        {% endfor %}
+    </fieldset>
+</div>
+{% endfor %}
+{% endblock content %}

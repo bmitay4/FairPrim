@@ -1,0 +1,23 @@
+{% extends "layout.html" %}
+{% block content %}
+{% for post in posts %}
+<article class="media content-section">
+    <img class="rounded-circle article-img mr-auto"
+         src="{{url_for('static', filename='profile_pics/'+post.author.image_file)}}">
+    <div class="media-body">
+        <div class="article-metadata">
+            <small class="text-muted mr-2">&nbsp;תאריך:</small>
+            <small class="mr-2">{{ post.date_posted.strftime('%Y-%m-%d') }}</small>
+            <small class="text-muted mr-2">מפלגה:</small>
+            <a class="mr-2" href="{{url_for('user_posts', username=post.author.username)}}">{{ post.author.party }}</a>
+        </div>
+        <h2><a class="article-title mr-2" href="{{url_for('user_posts', username=post.author.username)}}">{{ post.title }}</a></h2>
+        <p class="article-content mr-2">{{ post.content }}</p>
+        <p class="article-content-logo">
+            <img class="img-thumbnail account-img-logo" src="{{url_for('static', filename='profile_pics/'+post.author.party_image_file)}}">
+
+        </p>
+    </div>
+</article>
+{% endfor %}
+{% endblock content %}

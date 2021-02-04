@@ -1,0 +1,60 @@
+{% extends "layout.html" %}
+{% block content %}
+<div class="content-section">
+    <form method="POST" action="">
+        {{ form.hidden_tag() }}
+        <fieldset class="form-group">
+            <legend class="border-bottom mb-4">צור פריימריז עבור מפלגתך</legend>
+            <div class="form-group">
+                {{ form.date.label(class="form-control-label") }}
+                {% if form.date.errors %}
+                {{form.date(class="form-control form-control-lg is-invalid")}}
+                <div class="invalid-feedback">
+                    {% for error in form.date.errors %}
+                    <span>
+                                    {{ error }}
+                                </span>
+                    {% endfor %}
+                </div>
+                {% else %}
+                {{ form.date(class="form-control form-control-lg") }}
+                {% endif %}
+            </div>
+            <div class="form-group">
+                {{ form.content.label(class="form-control-label") }}
+                {% if form.content.errors %}
+                {{form.content(class="form-control form-control-lg is-invalid")}}
+                <div class="invalid-feedback">
+                    {% for error in form.content.errors %}
+                    <span>
+                                    {{ error }}
+                                </span>
+                    {% endfor %}
+                </div>
+                {% else %}
+                {{ form.content(class="form-control form-control-lg") }}
+                {% endif %}
+            </div>
+
+            <div class="form-group">
+                {{ form.persons.label(class="form-control-label") }}
+                {% if form.persons.errors %}
+                {{form.persons(class="form-control form-control-lg is-invalid")}}
+                <div class="invalid-feedback">
+                    {% for error in form.persons.errors %}
+                    <span>
+                                    {{ error }}
+                                </span>
+                    {% endfor %}
+                </div>
+                {% else %}
+                {{ form.persons(class="form-control form-control-lg") }}
+                {% endif %}
+            </div>
+        </fieldset>
+        <div class="form-group">
+            {{ form.submit(class="btn btn-outline-info") }}
+        </div>
+    </form>
+</div>
+{% endblock content %}
