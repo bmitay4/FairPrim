@@ -14,8 +14,6 @@ chardet==3.0.4
 Click==7.0
 colorama==0.4.3
 cryptography==2.8
-cupshelpers==1.0
-cvxpy==1.1.7
 cycler==0.10.0
 dbus-python==1.2.16
 decorator==4.4.2
@@ -40,16 +38,9 @@ future==0.18.2
 getmac==0.8.2
 gevent==20.9.0
 gevent-websocket==0.10.1
-google-api-core==1.23.0
-google-api-python-client==1.12.5
-google-auth==1.22.1
-google-auth-httplib2==0.0.4
-google-auth-oauthlib==0.4.1
-googleapis-common-protos==1.52.0
 gpg===1.13.1-unknown
 greenlet==0.4.17
 gunicorn==20.0.4
-httplib2==0.18.1
 hyperlink==20.0.1
 idna==2.8
 ifcfg==0.21
