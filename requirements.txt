@@ -85,8 +85,6 @@ systemd-python==234
 tornado==6.1
 torrequest==0.1.0
 tzlocal==2.1
-ubuntu-advantage-tools==20.3
-ubuntu-drivers-common==0.0.0
 ufw==0.36
 unattended-upgrades==0.1
 uritemplate==3.0.1
