@@ -9,7 +9,6 @@ from flask_login import login_user, current_user, logout_user, login_required
 from FairPrim import segal
 from string import ascii_lowercase
 
-
 def update_values():
     posts_count = Post.query.count()
     election_count = Election.query.count()
@@ -60,6 +59,10 @@ def get_checkbox(selected):
 @app.route('/voting', methods=['GET', 'POST'])
 @login_required
 def voting():
+
+    open("FairPrim/static/party.txt", 'w').close()
+    open("FairPrim/static/party_o.txt", 'w').close()
+
     posts = Post.query.filter_by(author=current_user).count()
     info = update_values()
     if posts > 0:
@@ -68,10 +71,14 @@ def voting():
         arr_info = get_info(posts.first(), election.all())
 
         if election.count() > 0:
-            arr_info.insert(8, to_rem(arr_info))
+            arr_info.insert(8, to_rem(arr_info, current_user.party, current_user.username))
             arr_info.insert(9, len(arr_info[8]))
             arr_info.insert(10, get_candidate_by_char(arr_info))
             edit_txt(arr_info)
+        else:
+            flash(' אין מידע להצגה, טרם התקבלו הצבעות בפריימריז', 'danger')
+            return redirect(url_for('home'))
+
         return render_template('voting.html', author=current_user, info=arr_info, election=election, posts=posts,
                                total_info=info, avg=round(arr_info[5] / arr_info[3], 4),
                                max=math.ceil(1 / (arr_info[5] / arr_info[3])))
@@ -91,8 +98,8 @@ def calculate_algo(post: Post):
     return map_project_to_cost
 
 
-def to_rem(arr_info) -> list:
-    return segal.run(arr_info[6], arr_info[7], arr_info[5])
+def to_rem(arr_info, party, username) -> list:
+    return segal.run(arr_info[6], arr_info[7], arr_info[5],party, username)
 
 
 def get_candidate_by_char(info):
@@ -125,14 +132,16 @@ def get_info(post: Post, election: Election):
     arr_info.insert(3, sum(arr_info[2]))
     voting_by_users = [] * 2 * arr_info[3]
     arr_info.insert(4, voting_by_users)
-    if post.polls_predict == ' ':
+    if post.polls_predict == "":
         arr_info.insert(5, arr_info[0])
     else:
         arr_info.insert(5, post.polls_predict)
-    converted_voting_by_users = [0] * arr_info[3]
+    if post.voted_allow == 1:
+        converted_voting_by_users = [0] * arr_info[3]
+    else:
+        converted_voting_by_users = [0] * int((arr_info[3]/int(post.voted_allow)))
     arr_info.insert(6, candidate_dic)
     arr_info.insert(7, converted_voting_by_users)
-
     for index, voter in enumerate(election):
         total_vote = ""
         total_converted_vote = ""
@@ -144,6 +153,7 @@ def get_info(post: Post, election: Election):
                         total_vote = total_vote + arr_info[1][int(single_vote)] + ", "
         if len(total_vote) > 0:
             arr_info[4].insert(index, [voter.id, total_vote[:-2]])
+        if len(total_converted_vote) > 0:
             arr_info[7][index] = total_converted_vote
 
     return arr_info

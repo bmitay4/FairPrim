@@ -62,7 +62,7 @@ class PostForm(FlaskForm):
     title = StringField('כותרת', validators=[DataRequired()])
     date = DateField('מועד הפריימריז המתוכנן', format='%Y-%m-%d')
     content = TextAreaField('תיאור כללי', validators=[DataRequired()])
-    polls_predict = IntegerField('כמות מנדטים צפויה עפ"י הסקרים האחרונים (ניתן להשאיר ריק באם לא קיים שיערוך)')
+    polls_predict = StringField('כמות מנדטים צפויה עפ"י הסקרים האחרונים (ניתן להשאיר ריק באם לא קיים שיערוך)')
     members = TextAreaField('רשימת המועמדים', validators=[DataRequired()])
     voted_allow = IntegerField('כמות הצבעות מותרת (ברירת מחדל 1)', validators=[DataRequired()])
     submit = SubmitField('שלח')

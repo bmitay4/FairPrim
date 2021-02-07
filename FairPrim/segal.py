@@ -2,6 +2,7 @@
 # at https://github.com/erelsgl
 
 from itertools import chain, combinations
+from time import gmtime, strftime
 import logging, sys
 
 logger = logging.getLogger(__name__)
@@ -21,10 +22,12 @@ def powerset(iterable: list):
     return set(chain.from_iterable(combinations(s, r) for r in range(len(s) + 1)))
 
 
-def proportional_budgeting(map_project_to_cost: dict, votes: list, limit: int) -> set:
+def proportional_budgeting(map_project_to_cost: dict, votes: list, limit: int, party, username) -> set:
     budgeted_projects = set()
     votes[:] = map(set, votes)  # convert every vote to a set
     money_per_voter = limit / len(votes)
+    logger.info("-----------------------------")
+    logger.info("חישוב הצבעות עבור פריימריז של מפלגת {}\nיוזם הפריימריז: {}\nתאריך יצירת הדוח: {}\n".format(party, username, strftime("%Y-%m-%d %H:%M:%S", gmtime())))
     logger.info("\nתקציב כולל (כמות מנדטים צפויה) = {}\nכמות המצביעים = {}\nמשקל כל הצבעה = {}\n".format(limit, len(votes), money_per_voter))
     for i in range(len(votes)):
         votes[i] = set(votes[i])
@@ -42,15 +45,16 @@ def proportional_budgeting(map_project_to_cost: dict, votes: list, limit: int) -
                 votes = [vote for vote in votes if not vote.issuperset(ps)]
         else:
             if map_project_set_to_cost(ps) <= limit:
-                logger.info("{}: סך הכל הצבעות שהתקבלו {} -- לא מספיק".format(
+                logger.info("{}: סך הכל הצבעות שהתקבלו {} -- לא מספיק קולות כדי להיבחר".format(
                     "".join(sorted(ps)), len(supporting_votes)))
+    logger.info("-----------------------------")
     return sorted(budgeted_projects)
 
 
-def run(map_project_to_cost, votes, limit):
+def run(map_project_to_cost, votes, limit, party, username):
     logger.setLevel(logging.INFO)
 
-    return proportional_budgeting(map_project_to_cost, votes, limit)
+    return proportional_budgeting(map_project_to_cost, votes, limit, party, username)
 
 # if __name__ == '__main__':
 #     map_project_to_cost = {"a": 1, "b": 1, "c": 1, "d": 1}

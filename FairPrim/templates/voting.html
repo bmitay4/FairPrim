@@ -12,9 +12,9 @@
 
             <p><img class="img-thumbnail mb-1"
                     src="{{url_for('static', filename='profile_pics/voters.png')}}"> סה"כ מצביעים בפריימריז: {{info[3]}} (n)</p>
-            {% if post.polls_predict > 0 %}
+            {% if post.polls_predict|int > 0 %}
             <p><img class="img-thumbnail mb-1"
-                    src="{{url_for('static', filename='profile_pics/mandat.png')}}"> כמות מנדטים צפויה: {{post.polls_predict}} (L)</p>
+                    src="{{url_for('static', filename='profile_pics/mandat.png')}}"> כמות מנדטים צפויה: {{post.polls_predict|int}} (L)</p>
             {% else %}
             <p><img class="img-thumbnail mb-1"
                     src="{{url_for('static', filename='profile_pics/mandat.png')}}"> אין מידע עבור כמות המנדטים הצפויה למפלגה. לכן התקציב (L) הוא כמספר המועמדים בפריימריז</p>
@@ -26,19 +26,19 @@
         <fieldset class="form-group">
             <h5><b><p class="border-bottom mt-2"> שקלול קולות המצביעים לפי אלגוריתם האריס ברטון וטלמון</p></b></h5>
             <p>משקלה של כל הצבעה: {{avg}} (L/n)</p>
-            <p>כלומר, לכל מתמודד דרושים (לפחות) {{max}} קולות ע"מ להתברג לרשימת {{post.polls_predict}} המקומות הראשונים בפריימריז</p>
+            <p>כלומר, לכל מתמודד דרושים (לפחות) {{max}} קולות ע"מ להתברג לרשימת {{info[5]}} המקומות הראשונים בפריימריז</p>
             {% for vote in info[2] %}
             <div class="input-group">
                 <div class="input-group-prepend">
                     <span class="input-group-text" id="candidate">{{info[1][loop.index0]}}</span>
                 </div>
-                <span class="form-control"> {{vote}} קולות. חישוב הקולות לפי האלגוריתם: {{info[3]}}&divide;({{post.polls_predict}}*{{vote}}) </span>
+                <span class="form-control"> {{vote}} קולות. חישוב הקולות לפי האלגוריתם: {{info[3]}}&divide;({{info[5]}}*{{vote}}) </span>
             </div>
             {% endfor %}
             <br>
             <h6><b><a class="mt-2" href="{{url_for('static', filename='party_o.txt')}}">לצפייה בתוצאות ודרך חישוב האלגוריתם לחץ כאן</a></b></h6>
             <h5><b><p class="border-bottom mt-4">סיכום</p></b></h5>
-            <p>הבחירות הסתיימו, ולא חרגנו מהתקציב (כמות מנדטים הצפויה, {{post.polls_predict}}) ונותרו לנו {{(post.polls_predict-info[9])}} מקומות נוספים</p>
+            <p>הבחירות הסתיימו, ולא חרגנו מהתקציב (כמות מנדטים הצפויה, {{info[5]}}) ונותרו לנו {{(info[5]-info[9])}} מקומות נוספים</p>
             <p>להלן הזוכים בפריימריז, מדורגים לפי כמות הקולות שקיבלו<br>
              (המערכת משאירה ליו"ר את האפשרות לחלק את יתר הקולות שלא נכללו עפ"י שיקול חברי המפלגה)</p>
             {% for winner in info[10] %}
