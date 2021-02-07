@@ -1,7 +1,7 @@
 from flask_wtf import FlaskForm
 from flask_wtf.file import FileField, FileAllowed
 from flask_login import current_user
-from wtforms import StringField, PasswordField, SubmitField, BooleanField, TextAreaField, DateField
+from wtforms import StringField, PasswordField, SubmitField, BooleanField, TextAreaField, DateField, IntegerField
 from wtforms.validators import DataRequired, Length, Email, EqualTo, ValidationError
 from FairPrim.models import User
 
@@ -54,8 +54,7 @@ class UpdateAccountForm(FlaskForm):
 
 
 class ElectionForm(FlaskForm):
-    user_id = StringField('תעודת זהות', validators=[DataRequired()])
-    member = StringField('הצבעה', validators=[DataRequired()])
+    user_id = IntegerField('תעודת זהות', validators=[DataRequired()])
     submit = SubmitField('הצבע')
 
 
@@ -63,6 +62,8 @@ class PostForm(FlaskForm):
     title = StringField('כותרת', validators=[DataRequired()])
     date = DateField('מועד הפריימריז המתוכנן', format='%Y-%m-%d')
     content = TextAreaField('תיאור כללי', validators=[DataRequired()])
+    polls_predict = IntegerField('כמות מנדטים צפויה עפ"י הסקרים האחרונים (ניתן להשאיר ריק באם לא קיים שיערוך)')
     members = TextAreaField('רשימת המועמדים', validators=[DataRequired()])
+    voted_allow = IntegerField('כמות הצבעות מותרת (ברירת מחדל 1)', validators=[DataRequired()])
     submit = SubmitField('שלח')
 

@@ -16,7 +16,6 @@
                         {% endfor %}
                     </div>
                     {% else %}
-
                     {{form.date(class="form-control", type="date")}}
                     {% endif %}
 
@@ -48,10 +47,18 @@
                 {{ form.content(class="form-control form-control-lg") }}
                 {% endif %}
             </div>
+                <div class="form-group">
+                {{ form.polls_predict.label(class="form-control-label") }}
+                    <small class="text-muted"><br>באם קיים שיערוך לכמות המנדטים הצפויה למפלגה, הנתון יכול לשקף את היתכנות כניסת חברי המפלגה לכנסת לאחר הפריימריז</small>
+                {{ form.polls_predict(class="form-control form-control-lg", value = null) }}
+            </div>
+                <div class="form-group">
+                {{ form.voted_allow.label(class="form-control-label") }}
+                {{ form.voted_allow(class="form-control form-control-lg", value = 1) }}
+            </div>
             <div class="input-group">
                 <span class="input-group-text">{{form.members.label}}</span>
                 {{ form.members(class="form-control") }}
-<!--                <textarea class="form-control"></textarea>-->
             </div>
         </fieldset>
         <div class="form-group">

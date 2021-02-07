@@ -29,15 +29,17 @@ class Post(db.Model):
     content = db.Column(db.Text, nullable=False)
     members = db.Column(db.Text, nullable=False)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    polls_predict = db.Column(db.Integer, nullable=True)
+    voted_allow = db.Column(db.Integer, nullable=False, default=1)
 
     def __repr__(self):
-        return f"Post('{self.title}', '{self.date_posted}', '{self.content}', '{self.members}')"
+        return f"Post('{self.title}', '{self.date_posted}', '{self.content}', '{self.members}', '{self.polls_predict}', '{self.voted_allow}')"
 
 
 class Election(db.Model):
     id = db.Column(db.Integer, unique=True, primary_key=True)
     party = db.Column(db.String(20), nullable=False)
-    member_voted = db.Column(db.Integer, nullable=False)
+    member_voted = db.Column(db.String(8), nullable=False)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
 
     def __repr__(self):

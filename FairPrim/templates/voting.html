@@ -2,27 +2,6 @@
 {% block content %}
 {% for post in posts %}
 
-<!--[count of candidates, actual list of candidate, voting count array per candidate]   [3,(avi, moshe, david), (1,0,4)]-->
-{% set main_info = [0, 0, 0] %}
-{% set list1 = post.members.split(', ') %}
-{% for member in list1 %}
-{{main_info.insert(0, loop.length)}}
-{{main_info.insert(1, list1)}}
-{% break %}
-{% endfor %}
-{% set voting = [0]*main_info[0] %}
-{{main_info.insert(2, voting)}}
-
-{% for candidate in range(main_info[0]) %}
-    {% for voter in election %}
-        {% if voter.member_voted == candidate %}
-            {% if main_info[2].insert(candidate, main_info[2][candidate]+1) %}{% endif %}
-                {{main_info[2].pop(candidate+1)}}
-        {% endif %}
-    {% endfor %}
-{% endfor %}
-
-
 <div class="content-section">
     <fieldset class="form-group">
         <legend class="border-bottom mb-4">
@@ -30,39 +9,56 @@
             <small class="text-muted mr-2">({{ post.date_posted.strftime('%Y-%m-%d') }})</small>
         </legend>
         <div class="form-group">
-            <p> סה"כ מצביעים בפריימריז: {{ count }} (n)</p>
-            <p> סה"כ מועמדים שהתמודדו ברשימה: {{main_info[0]}} (L)
-            <p> רשימת המועמדים: {{main_info[1]}}</p>
+
+            <p><img class="img-thumbnail mb-1"
+                    src="{{url_for('static', filename='profile_pics/voters.png')}}"> סה"כ מצביעים בפריימריז: {{info[3]}} (n)</p>
+            {% if post.polls_predict > 0 %}
+            <p><img class="img-thumbnail mb-1"
+                    src="{{url_for('static', filename='profile_pics/mandat.png')}}"> כמות מנדטים צפויה: {{post.polls_predict}} (L)</p>
+            {% else %}
+            <p><img class="img-thumbnail mb-1"
+                    src="{{url_for('static', filename='profile_pics/mandat.png')}}"> אין מידע עבור כמות המנדטים הצפויה למפלגה. לכן התקציב (L) הוא כמספר המועמדים בפריימריז</p>
+            {% endif %}
+            <p><img class="img-thumbnail mb-1"
+                    src="{{url_for('static', filename='profile_pics/users.png')}}"> סה"כ מועמדים שהתמודדו ברשימה: {{info[0]}}</p>
+            <p>רשימת המועמדים: {{info[1]}} </p>
         </div>
-            <fieldset class="form-group">
-        <p> שקלול קולות המצביעים לפי אלגוריתם האריס ברטון וטלמון</p>
-            {% for candidate in main_info[1] %}
-            {% set first_index = loop.index %}
-                {% for voters in main_info[2] %}
-                {% set second_index = loop.index %}
-                {% if first_index == second_index %}
-                {% set sum = (voters * main_info[0])/count %}
+        <fieldset class="form-group">
+            <h5><b><p class="border-bottom mt-2"> שקלול קולות המצביעים לפי אלגוריתם האריס ברטון וטלמון</p></b></h5>
+            <p>משקלה של כל הצבעה: {{avg}} (L/n)</p>
+            <p>כלומר, לכל מתמודד דרושים (לפחות) {{max}} קולות ע"מ להתברג לרשימת {{post.polls_predict}} המקומות הראשונים בפריימריז</p>
+            {% for vote in info[2] %}
             <div class="input-group">
-            <div class="input-group-prepend">
-                <span class="input-group-text" id="candidate">{{candidate}}</span>
+                <div class="input-group-prepend">
+                    <span class="input-group-text" id="candidate">{{info[1][loop.index0]}}</span>
+                </div>
+                <span class="form-control"> {{vote}} קולות. חישוב הקולות לפי האלגוריתם: {{info[3]}}&divide;({{post.polls_predict}}*{{vote}}) </span>
             </div>
-            <input type="text" class="form-control" placeholder="{{voters}} קולות, נחשב את החלוקה לפי האלגוריתם: {{count}}/({{voters}} * {{main_info[0]}}) = {{sum}}">
-        </div>
-        {% endif %}
-        {% endfor %}
-         {% endfor %}
-    </fieldset>
-                <p>פנקס הבוחרים המלא</p>
-        {% for elc in election %}
+            {% endfor %}
+            <br>
+            <h6><b><a class="mt-2" href="{{url_for('static', filename='party_o.txt')}}">לצפייה בתוצאות ודרך חישוב האלגוריתם לחץ כאן</a></b></h6>
+            <h5><b><p class="border-bottom mt-4">סיכום</p></b></h5>
+            <p>הבחירות הסתיימו, ולא חרגנו מהתקציב (כמות מנדטים הצפויה, {{post.polls_predict}}) ונותרו לנו {{(post.polls_predict-info[9])}} מקומות נוספים</p>
+            <p>להלן הזוכים בפריימריז, מדורגים לפי כמות הקולות שקיבלו<br>
+             (המערכת משאירה ליו"ר את האפשרות לחלק את יתר הקולות שלא נכללו עפ"י שיקול חברי המפלגה)</p>
+            {% for winner in info[10] %}
+            <p>{{loop.index}}. {{winner}}</p>
+            {% endfor %}
+        </fieldset>
+        <h5><b><p class="border-bottom mt-4">פנקס הבוחרים המלא</p></b></h5>
+        {% for voter in info[4] %}
         <fieldset class="input-group">
             <div class="input-group-prepend">
                 <span class="input-group-text" id="id">ת.ז. הבוחר</span>
             </div>
-            <input type="text" class="form-control" placeholder="{{elc.id}}">
+            <input type="text" class="form-control" placeholder="{{voter[0]}}">
             <div class="input-group-prepend">
                 <span class="input-group-text" id="member">הצביע עבור</span>
             </div>
-            <input type="text" class="form-control" placeholder="{{main_info[1][elc.member_voted]}}">
+            {% set votes = voter[1].split(',') %}
+            {% for vote in votes %}
+            <input type="text" class="form-control" placeholder="{{vote}}">
+            {% endfor %}
         </fieldset>
         {% endfor %}
     </fieldset>
