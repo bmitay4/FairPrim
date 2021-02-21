@@ -1,6 +1,9 @@
 import math
 import secrets
 import os
+from datetime import datetime
+from time import strftime, gmtime
+
 from flask import render_template, url_for, flash, redirect, request
 from FairPrim.forms import RegistrationForm, LoginForm, UpdateAccountForm, PostForm, ElectionForm
 from FairPrim.models import User, Post, Election
@@ -27,6 +30,15 @@ def home():
 def user_posts(username):
     user = User.query.filter_by(username=username).first_or_404()
     posts = Post.query.filter_by(author=user)
+
+    current_time = datetime.now()
+    election_time = posts.first().date_posted
+    if election_time < current_time:
+        info = update_values()
+        posts = Post.query.all()
+        flash('מועד הפריימריז נגמר. אין אפשרות להצביע להצביע עבור מפלגה זו', 'danger')
+        return render_template('home.html', posts=posts, total_info=info)
+
     form = ElectionForm()
     info = update_values()
 
